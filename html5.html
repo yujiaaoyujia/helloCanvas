@@ -1,0 +1,178 @@
+<!DOCTYPE html>
+<html>
+<head lang="en">
+    <meta charset="UTF-8">
+    <title></title>
+    <link rel="stylesheet" href="css3.css"/>
+    <script>
+        //初始化
+        function init(){
+            draw_square('canvas1');
+            draw_circle('canvas2');
+            draw_line('canvas3');
+            draw_bezier('canvas4');
+            draw_linear_gradient('canvas5');
+            draw_radial_gradient('canvas6');
+            animation('canvas7');
+        }
+        //获取画布id返回2d-context
+        function get_canvas(id) {
+            return document.getElementById(id) == null? false : document.getElementById(id).getContext('2d');
+        }
+
+        //基础图形
+        function draw_square(id){
+            var context = get_canvas(id);
+            context.fillStyle = "#eeeeee";
+            context.fillRect(0,0,300,200);
+
+            context.fillStyle = "red";
+            context.fillRect(50,50,100,100);
+
+            context.strokeStyle = "#330000";
+            context.lineWidth = 2;
+            context.strokeRect(50,50,100,100);
+        }
+        function draw_circle(id) {
+            var context = get_canvas(id);
+            context.fillStyle = "#eeeeee";
+            context.fillRect(0,0,300,200);
+            for(var i = 0; i < 10; i++){
+                context.beginPath();
+                context.arc(i * 25, i * 15, i * 10, 0, Math.PI * 2, true);
+                context.closePath();
+                context.fillStyle = 'rgba(255, 0, 0, 0.3)';
+                context.fill();
+            }
+        }
+        function draw_line(id) {
+            var context = get_canvas(id);
+            context.fillStyle = "#eeeeee";
+            context.fillRect(0,0,300,300);
+
+            //基础：画一条直线
+            context.beginPath();
+            context.strokeStyle = 'rgb(0, 100, 100)';
+            context.lineWidth = 5;
+            context.moveTo(10, 275);
+            context.lineTo(290, 275);
+            context.closePath();
+            context.stroke();
+
+            //画高级图形
+            var dx = 150, dy = 150, s = 100;
+            context.beginPath();
+            context.fillStyle = 'rgb(100, 255, 100)';
+            context.strokeStyle = 'rgb(0, 0, 100)';
+            context.lineWidth = 1;
+            var x = Math.sin(0), y = Math.cos(0), dig = Math.PI / 15 * 11;
+            for(var i = 0; i < 30; i++){
+                x = Math.sin(i * dig);
+                y = Math.cos(i * dig);
+                context.lineTo(dx + x * s, dy + y * s);
+            }
+            context.closePath();
+            context.fill();
+            context.stroke();
+
+
+        }
+        function draw_bezier(id) {
+            var context = get_canvas(id);
+            context.fillStyle = "#eeeeee";
+            context.fillRect(0,0,300,300);
+
+            //基础：画一条曲线
+            context.beginPath();
+            context.strokeStyle = 'rgb(0, 255, 0)';
+            context.lineWidth = 2;
+            context.bezierCurveTo(25, 150, 60, 0, 275, 20);
+            context.stroke();
+
+            //画高级图形
+            var dx = 150, dy = 150, s = 100;
+            context.beginPath();
+            context.globalCompositeOperation = 'end';
+            context.fillStyle = 'rgb(100, 255, 100)';
+            var x = Math.sin(0), y = Math.cos(0), dig = Math.PI / 15 * 11;
+            context.moveTo(dx, dy);
+            for(var i = 0; i < 30; i++){
+                x = Math.sin(i * dig);
+                y = Math.cos(i * dig);
+                context.bezierCurveTo(dx + x * s, dy + y * s - 100, dx + x * s + 100, dy + y * s, dx + x * s, dy + y * s);
+            }
+            context.closePath();
+            context.fill();
+            //context.stroke();
+        }
+
+        //渐变图形
+        function draw_linear_gradient(id) {
+            var context = get_canvas(id);
+            context.fillStyle = "#eeeeee";
+            context.fillRect(0,0,300,200);
+
+            var g1 = context.createLinearGradient(0,0,0,300);
+            g1.addColorStop(0,'rgb(255, 255, 0)');
+            g1.addColorStop(1,'rgb(0, 255, 255)');
+            context.fillStyle = g1;
+            context.fillRect(0, 0, 300, 200);
+
+            var g2 = context.createLinearGradient(0,0,300,0);
+            g2.addColorStop(0,'rgba(0, 0, 255, 0.5)');
+            g2.addColorStop(1,'rgba(255, 0, 0, 0.5)');
+
+            for(var i = 0; i < 10; i++){
+                context.beginPath();
+                context.fillStyle = g2;
+                context.arc(i * 25, i * 15, i * 10, 0, Math.PI * 2, true);
+                context.closePath();
+                context.fill();
+            }
+        }
+        function draw_radial_gradient(id) {
+            var context = get_canvas(id);
+            context.fillStyle = "#eeeeee";
+            context.fillRect(0,0,300,200);
+
+            var g1 = context.createRadialGradient(150, 100, 200, 150, 100, 0);
+            g1.addColorStop(0,'rgb(255, 255, 0)');
+            g1.addColorStop(1,'rgb(0, 255, 255)');
+            context.fillStyle = g1;
+            context.fillRect(0, 0, 300, 200);
+        }
+
+        //动画
+        var context;
+        var width, height;
+        var i = 0;
+        function animation(id) {
+            var canvas = document.getElementById(id);
+            if (canvas == null) {return false;}
+            context = canvas.getContext('2d');
+            width = canvas.width;
+            height = canvas.height;
+            setInterval(rotate, 10);
+        }
+        function rotate() {
+            context.clearRect(0, 0, width, height);
+            context.fillStyle = "red";
+            context.fillRect(i, 0, 30, 30);
+            i = i + 5;
+        }
+    </script>
+</head>
+<body onload="init()">
+<article>
+    <header>
+        <canvas id="canvas7" width="300" height="30"></canvas>
+        <canvas id="canvas1" width="300" height="200"></canvas>
+        <canvas id="canvas2" width="300" height="200"></canvas>
+        <canvas id="canvas3" width="300" height="300"></canvas>
+        <canvas id="canvas4" width="300" height="300"></canvas>
+        <canvas id="canvas5" width="300" height="200"></canvas>
+        <canvas id="canvas6" width="300" height="200"></canvas>
+    </header>
+</article>
+</body>
+</html>
